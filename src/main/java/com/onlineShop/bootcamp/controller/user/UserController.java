@@ -1,0 +1,45 @@
+package com.onlineShop.bootcamp.controller.user;
+
+import com.onlineShop.bootcamp.common.ApiResponse;
+import com.onlineShop.bootcamp.dto.UserResponse;
+import com.onlineShop.bootcamp.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@CrossOrigin(origins = "http://localhost:5173")
+@RestController
+@RequestMapping("/user")
+@RequiredArgsConstructor
+public class UserController {
+
+    private final UserService userService;
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponse>> getUserDetails() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserResponse user =userService.getUserByUsername(username);
+        
+        return ResponseEntity.ok(new ApiResponse<>(true, "User details are fetched succesfully" , user));
+    }
+
+    //Admin role
+    @PreAuthorize("hasRole('ADMIN")
+    @GetMapping()
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    //Admin role
+    @PreAuthorize("hasRole('ADMIN")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
+        userService.deleteUserById(id);
+        return ResponseEntity.ok("User is deleted");
+    }
+
+}
