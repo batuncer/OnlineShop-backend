@@ -2,7 +2,7 @@ package com.onlineShop.bootcamp.controller.user;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
 import com.onlineShop.bootcamp.dto.UserResponse;
-import com.onlineShop.bootcamp.service.UserService;
+import com.onlineShop.bootcamp.service.user.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,29 +17,30 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getUserDetails() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserResponse user =userService.getUserByUsername(username);
         
-        return ResponseEntity.ok(new ApiResponse<>(true, "User details are fetched succesfully" , user));
+        return ResponseEntity.ok(new ApiResponse<>(true, "User details are fetched successfully" , user));
     }
 
     //Admin role
     @PreAuthorize("hasRole('ADMIN")
     @GetMapping()
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
+        List<UserResponse> users = userService.getAllUsers();
+        return ResponseEntity.ok(new ApiResponse<>(true, "All users fetched", users));
     }
 
     //Admin role
     @PreAuthorize("hasRole('ADMIN")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUserById(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<String>> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
-        return ResponseEntity.ok("User is deleted");
+        return ResponseEntity.ok(new ApiResponse<>(true,"User is deleted", null));
     }
 
 }

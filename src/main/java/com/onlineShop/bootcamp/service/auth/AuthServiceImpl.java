@@ -1,4 +1,4 @@
-package com.onlineShop.bootcamp.service;
+package com.onlineShop.bootcamp.service.auth;
 
 import com.onlineShop.bootcamp.dto.AuthResponse;
 import com.onlineShop.bootcamp.dto.LoginRequest;
@@ -14,13 +14,14 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
 
+    @Override
     public AuthResponse register(RegisterRequest registerRequest) {
         if(userRepository.findByEmail(registerRequest.getEmail()).isPresent()){
             throw new RuntimeException("Email is already registered with " + registerRequest.getEmail());
@@ -34,26 +35,21 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
-
         String token = jwtUtil.generateJwtToken(user.getUsername());
 
         return new AuthResponse(token, user.getUsername(), user.getEmail());
     }
 
-
-
+    @Override
     public AuthResponse login(LoginRequest loginRequest) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
 
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
-
         String token = jwtUtil.generateJwtToken(user.getUsername());
 
         return new AuthResponse(token, user.getUsername(), user.getEmail());
     }
-
-
 
 }
