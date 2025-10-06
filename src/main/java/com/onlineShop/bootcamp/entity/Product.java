@@ -48,4 +48,10 @@ public class Product {
 
     @Column(name = "recommended_grams_per_cup")
     private Integer recommendedGramsPerCup;
+
+    @Column(name = "stock_quantity")
+    private Integer stockQuantity;
+
+    @Column(name = "description")
+    private String description;
 }
