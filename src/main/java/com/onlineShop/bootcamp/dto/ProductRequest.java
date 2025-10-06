@@ -23,4 +23,5 @@ public class ProductRequest {
     private Integer recommendedGramsPerCup;
     private Integer stockQuantity;
     private String description;
+    private String category;
 }
