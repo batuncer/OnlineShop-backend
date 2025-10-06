@@ -1,4 +1,4 @@
-package com.onlineShop.bootcamp.service;
+package com.onlineShop.bootcamp.service.product;
 
 
 import com.onlineShop.bootcamp.dto.ProductRequest;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class ProductService {
+public class ProductServiceImpl implements ProductService {
 
     @PersistenceContext
     private EntityManager em;
