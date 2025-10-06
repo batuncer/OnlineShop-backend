@@ -6,12 +6,15 @@ import com.onlineShop.bootcamp.dto.ProductResponse;
 import com.onlineShop.bootcamp.entity.Product;
 import com.onlineShop.bootcamp.entity.Supplier;
 import com.onlineShop.bootcamp.mapper.ProductMapper;
+import com.onlineShop.bootcamp.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,12 +29,11 @@ public class ProductServiceImpl implements ProductService {
     private EntityManager em;
 
     private final ProductMapper mapper;
+    private final ProductRepository repository;
 
     public ProductResponse create(ProductRequest req) {
-        // If you prefer a managed reference instead of the mapper stub:
         if (req.getSupplierId() != null) {
             Supplier ref = em.getReference(Supplier.class, req.getSupplierId());
-            // build entity using mapper then override supplier with managed ref
             Product p = mapper.toEntity(req);
             p.setSupplier(ref);
             em.persist(p);
@@ -58,10 +60,8 @@ public class ProductServiceImpl implements ProductService {
         Product p = em.find(Product.class, id);
         if (p == null) return null;
 
-        // update via mapper
         mapper.updateEntity(p, req);
 
-        // ensure Supplier is a managed reference
         if (req.getSupplierId() != null) {
             p.setSupplier(em.getReference(Supplier.class, req.getSupplierId()));
         } else {
@@ -78,5 +78,24 @@ public class ProductServiceImpl implements ProductService {
         em.remove(p);
         log.debug("Deleted product id={}", id);
         return true;
+    }
+
+    @Override
+    public Page<ProductResponse> listWithPagination(Pageable pageable, String search) {
+        Page<Product> products;
+        if (search != null && !search.trim().isEmpty()) {
+            products = repository.findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+                    search, search, pageable);
+        } else {
+            products = repository.findAll(pageable);
+        }
+        return products.map(mapper::toResponse);
+    }
+
+    @Override
+    public Page<ProductResponse> search(String query, Pageable pageable) {
+        Page<Product> products = repository.findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCase(
+                query, query, pageable);
+        return products.map(mapper::toResponse);
     }
 }
