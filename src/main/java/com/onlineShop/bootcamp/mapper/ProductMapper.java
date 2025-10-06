@@ -37,6 +37,8 @@ public class ProductMapper {
                 .caffeineMgPerG(entity.getCaffeineMgPerG())
                 .mainMedicinalUse(entity.getMainMedicinalUse())
                 .recommendedGramsPerCup(entity.getRecommendedGramsPerCup())
+                .description(entity.getDescription())
+                .category(entity.getCategory())
                 .build();
     }
 
