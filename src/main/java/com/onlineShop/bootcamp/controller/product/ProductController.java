@@ -3,7 +3,7 @@ package com.onlineShop.bootcamp.controller.product;
 import com.onlineShop.bootcamp.common.ApiResponse;
 import com.onlineShop.bootcamp.dto.ProductRequest;
 import com.onlineShop.bootcamp.dto.ProductResponse;
-import com.onlineShop.bootcamp.service.ProductService;
+import com.onlineShop.bootcamp.service.product.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +17,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService service;
+    private final ProductServiceImpl service;
 
     //Admin role
     @PreAuthorize("hasRole('ADMIN')")
