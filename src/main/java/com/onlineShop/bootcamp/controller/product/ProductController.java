@@ -5,10 +5,13 @@ import com.onlineShop.bootcamp.dto.ProductRequest;
 import com.onlineShop.bootcamp.dto.ProductResponse;
 import com.onlineShop.bootcamp.service.product.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
 import java.net.URI;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -35,9 +38,18 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ProductResponse>>> list() {
-        List<ProductResponse> products = service.list();
-        return ResponseEntity.ok(new ApiResponse<>(true, "All products fetched", products));
+    public ResponseEntity<ApiResponse<Page<ProductResponse>>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir,
+            @RequestParam(required = false) String search) {
+
+        Sort.Direction direction = Sort.Direction.fromString(sortDir);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        Page<ProductResponse> products = service.listWithPagination(pageable, search);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Products fetched successfully", products));
     }
 
     //Admin role
@@ -53,5 +65,16 @@ public class ProductController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> delete(@PathVariable Long id) {
         return service.delete(id) ? ResponseEntity.ok(new ApiResponse<>(true, "Product is deleted", null)) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<Page<ProductResponse>>> search(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductResponse> products = service.search(query, pageable);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Search results", products));
     }
 }
