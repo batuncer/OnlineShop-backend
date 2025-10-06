@@ -22,5 +22,6 @@ public class ProductResponse {
     private Integer caffeineMgPerG;
     private String mainMedicinalUse;
     private Integer recommendedGramsPerCup;
+    private Integer stockQuantity;
+    private String description;
 }
-
