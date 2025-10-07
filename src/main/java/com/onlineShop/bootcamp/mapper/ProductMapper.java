@@ -39,6 +39,7 @@ public class ProductMapper {
                 .recommendedGramsPerCup(entity.getRecommendedGramsPerCup())
                 .description(entity.getDescription())
                 .category(entity.getCategory())
+                .stockQuantity(entity.getStockQuantity())
                 .build();
     }
 
