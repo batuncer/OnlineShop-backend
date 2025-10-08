@@ -1,9 +1,7 @@
 package com.onlineShop.bootcamp.service.order;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
-import com.onlineShop.bootcamp.dto.order.OrderItemRequest;
-import com.onlineShop.bootcamp.dto.order.OrderRequest;
-import com.onlineShop.bootcamp.dto.order.OrderResponse;
+import com.onlineShop.bootcamp.dto.order.*;
 import com.onlineShop.bootcamp.entity.Order;
 import com.onlineShop.bootcamp.entity.OrderItem;
 import com.onlineShop.bootcamp.entity.Product;
@@ -47,7 +45,7 @@ public class OrderServiceImp implements OrderService {
         double totalWeight = 0.0;
         // Loop for each requested item
         for(OrderItemRequest item : orderRequest.getOrderItems()) {
-            Product product = productRepository.findById(item.getProductid()).orElseThrow(() -> new RuntimeException("Product not found" + item.getProductid()));
+            Product product = productRepository.findById(item.getProductId()).orElseThrow(() -> new RuntimeException("Product not found" + item.getProductId()));
 
             OrderItem orderItem = OrderItem.builder()
                     .product(product)
@@ -114,25 +112,36 @@ public class OrderServiceImp implements OrderService {
                 .collect(Collectors.toList());
     }
 
+
+
     @Override
-    public Map<String, Double> previewOrder(OrderRequest orderRequest) {
+    public OrderPreviewResponse previewOrder(OrderRequest orderRequest) {
         double totalPrice = 0.0;
         double totalWeight = 0.0;
+        List<OrderItemResponse> itemResponses = new ArrayList<>();
 
-        for(OrderItemRequest orderItem : orderRequest.getOrderItems()) {
-            Product product =productRepository.findById(orderItem.getProductid()).orElseThrow(()-> new RuntimeException("Product not found with " + orderItem.getProductid()));
-            totalPrice += Integer.parseInt(String.valueOf(product.getPriceGbp())) * orderItem.getQuantity();
+        for (OrderItemRequest orderItem : orderRequest.getOrderItems()) {
+            Product product = productRepository.findById(orderItem.getProductId())
+                    .orElseThrow(() -> new RuntimeException("Product not found with " + orderItem.getProductId()));
+
+            double itemTotal = product.getPriceGbp().doubleValue() * orderItem.getQuantity();
+            totalPrice += itemTotal;
             totalWeight += product.getAmountGrams() * orderItem.getQuantity();
+
+            OrderItemResponse itemResponse = new OrderItemResponse(
+                    product.getId(),
+                    product.getProductName(),
+                    orderItem.getQuantity(),
+                    product.getPriceGbp(),
+                    itemTotal
+            );
+
+            itemResponses.add(itemResponse);
         }
-        double shippingCost = shippingCostService.calculateShippingCost(totalPrice,totalWeight );
 
+        double shippingCost = shippingCostService.calculateShippingCost(totalPrice, totalWeight);
 
-        return Map.of(
-                "totalPrice", totalPrice,
-                "shippingCost", shippingCost
-        );
-
+        return new OrderPreviewResponse(totalPrice, shippingCost, itemResponses);
     }
-
 
 }

@@ -1,6 +1,7 @@
 package com.onlineShop.bootcamp.service.order;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
+import com.onlineShop.bootcamp.dto.order.OrderPreviewResponse;
 import com.onlineShop.bootcamp.dto.order.OrderRequest;
 import com.onlineShop.bootcamp.dto.order.OrderResponse;
 import com.onlineShop.bootcamp.entity.Order;
@@ -12,5 +13,5 @@ public interface OrderService {
     OrderResponse createOrder(Long userId, OrderRequest orderRequest);
     List<OrderResponse> getUserOrders(Long userId);
     List<OrderResponse> getAllOrders();
-    Map<String, Double> previewOrder(OrderRequest orderRequest);
+    OrderPreviewResponse previewOrder(OrderRequest orderRequest);
 }

@@ -1,6 +1,7 @@
 package com.onlineShop.bootcamp.controller.order;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
+import com.onlineShop.bootcamp.dto.order.OrderPreviewResponse;
 import com.onlineShop.bootcamp.dto.order.OrderRequest;
 import com.onlineShop.bootcamp.dto.order.OrderResponse;
 import com.onlineShop.bootcamp.service.order.OrderService;
@@ -20,6 +21,11 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @PostMapping("/preview")
+    public ResponseEntity<ApiResponse<OrderPreviewResponse>> previewOrder(@RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order preview", orderService.previewOrder(orderRequest)));
+    }
+
     //Admin role
     @PreAuthorize("hasRole('ADMIN")
     @GetMapping
@@ -27,20 +33,16 @@ public class OrderController {
         return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched", orderService.getAllOrders()));
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestParam Long userId, @RequestBody OrderRequest orderRequest) {
         return ResponseEntity.ok(new ApiResponse<>(true, "Order is created", orderService.createOrder(userId, orderRequest)));
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getUserOrders(@PathVariable Long userId) {
         return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched for the user", orderService.getUserOrders(userId)));
     }
 
-    @PostMapping("/preview")
-    public ResponseEntity<ApiResponse<Map<String, Double>>> previewOrder(@RequestBody OrderRequest orderRequest) {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Order preview", orderService.previewOrder(orderRequest)));
-    }
 
 
 }

@@ -1,6 +1,5 @@
 package com.onlineShop.bootcamp.entity;
 
-import com.onlineShop.bootcamp.dto.order.OrderItemResponse;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
