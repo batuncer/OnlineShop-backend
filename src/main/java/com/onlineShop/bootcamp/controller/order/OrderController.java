@@ -1,0 +1,46 @@
+package com.onlineShop.bootcamp.controller.order;
+
+import com.onlineShop.bootcamp.common.ApiResponse;
+import com.onlineShop.bootcamp.dto.order.OrderRequest;
+import com.onlineShop.bootcamp.dto.order.OrderResponse;
+import com.onlineShop.bootcamp.service.order.OrderService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@CrossOrigin(origins = "http://localhost:5173")
+@RestController
+@RequestMapping("/order")
+@RequiredArgsConstructor
+public class OrderController {
+
+    private final OrderService orderService;
+
+    //Admin role
+    @PreAuthorize("hasRole('ADMIN")
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched", orderService.getAllOrders()));
+    }
+
+    @PostMapping
+    public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestParam Long userId, @RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order is created", orderService.createOrder(userId, orderRequest)));
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponse<List<OrderResponse>>> getUserOrders(@PathVariable Long userId) {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched for the user", orderService.getUserOrders(userId)));
+    }
+
+    @PostMapping("/preview")
+    public ResponseEntity<ApiResponse<Map<String, Double>>> previewOrder(@RequestBody OrderRequest orderRequest) {
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order preview", orderService.previewOrder(orderRequest)));
+    }
+
+
+}

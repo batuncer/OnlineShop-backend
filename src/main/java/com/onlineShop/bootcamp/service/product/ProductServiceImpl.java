@@ -1,7 +1,7 @@
 package com.onlineShop.bootcamp.service.product;
 
-import com.onlineShop.bootcamp.dto.ProductRequest;
-import com.onlineShop.bootcamp.dto.ProductResponse;
+import com.onlineShop.bootcamp.dto.product.ProductRequest;
+import com.onlineShop.bootcamp.dto.product.ProductResponse;
 import com.onlineShop.bootcamp.entity.Product;
 import com.onlineShop.bootcamp.entity.Supplier;
 import com.onlineShop.bootcamp.mapper.ProductMapper;

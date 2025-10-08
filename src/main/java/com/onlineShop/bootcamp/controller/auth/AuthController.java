@@ -1,9 +1,9 @@
 package com.onlineShop.bootcamp.controller.auth;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
-import com.onlineShop.bootcamp.dto.AuthResponse;
-import com.onlineShop.bootcamp.dto.LoginRequest;
-import com.onlineShop.bootcamp.dto.RegisterRequest;
+import com.onlineShop.bootcamp.dto.auth.AuthResponse;
+import com.onlineShop.bootcamp.dto.auth.LoginRequest;
+import com.onlineShop.bootcamp.dto.auth.RegisterRequest;
 import com.onlineShop.bootcamp.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.onlineShop.bootcamp.dto;
+package com.onlineShop.bootcamp.dto.product;
 
 import com.onlineShop.bootcamp.entity.enums.BrewColor;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,8 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductRequest {
+public class ProductResponse {
+    private Long id;
     private Long supplierId;
     private String typeName;
     private Integer amountGrams;

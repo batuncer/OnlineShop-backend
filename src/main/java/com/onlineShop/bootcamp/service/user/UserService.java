@@ -1,6 +1,6 @@
 package com.onlineShop.bootcamp.service.user;
 
-import com.onlineShop.bootcamp.dto.UserResponse;
+import com.onlineShop.bootcamp.dto.user.UserResponse;
 
 import java.util.List;
 

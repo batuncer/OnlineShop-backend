@@ -1,8 +1,8 @@
 package com.onlineShop.bootcamp.controller.product;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
-import com.onlineShop.bootcamp.dto.ProductRequest;
-import com.onlineShop.bootcamp.dto.ProductResponse;
+import com.onlineShop.bootcamp.dto.product.ProductRequest;
+import com.onlineShop.bootcamp.dto.product.ProductResponse;
 import com.onlineShop.bootcamp.service.product.ProductServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

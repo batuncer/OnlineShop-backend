@@ -1,6 +1,6 @@
 package com.onlineShop.bootcamp.service.user;
 
-import com.onlineShop.bootcamp.dto.UserResponse;
+import com.onlineShop.bootcamp.dto.user.UserResponse;
 import com.onlineShop.bootcamp.entity.User;
 import com.onlineShop.bootcamp.mapper.UserMapper;
 import com.onlineShop.bootcamp.repository.UserRepository;

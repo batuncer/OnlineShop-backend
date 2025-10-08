@@ -1,7 +1,7 @@
 package com.onlineShop.bootcamp.controller.user;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
-import com.onlineShop.bootcamp.dto.UserResponse;
+import com.onlineShop.bootcamp.dto.user.UserResponse;
 import com.onlineShop.bootcamp.service.user.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

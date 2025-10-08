@@ -1,6 +1,5 @@
 package com.onlineShop.bootcamp.repository;
 
-import com.onlineShop.bootcamp.dto.UserResponse;
 import com.onlineShop.bootcamp.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
