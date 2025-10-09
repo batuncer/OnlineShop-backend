@@ -71,5 +71,11 @@ public class ProductMapper {
         if (src.getRecommendedGramsPerCup() != null) {
             target.setRecommendedGramsPerCup(src.getRecommendedGramsPerCup());
         }
+        if (src.getCategory() != null) {
+            target.setCategory(src.getCategory());
+        }
+        if (src.getDescription() != null) {
+            target.setDescription(src.getDescription());
+        }
     }
 }
