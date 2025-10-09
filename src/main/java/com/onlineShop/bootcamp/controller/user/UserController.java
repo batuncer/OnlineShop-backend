@@ -2,6 +2,7 @@ package com.onlineShop.bootcamp.controller.user;
 
 import com.onlineShop.bootcamp.common.ApiResponse;
 import com.onlineShop.bootcamp.dto.user.UserResponse;
+import com.onlineShop.bootcamp.service.user.UserService;
 import com.onlineShop.bootcamp.service.user.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final UserService userService;
 
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponse>> getUserDetails() {
