@@ -3,7 +3,6 @@ package com.onlineShop.bootcamp.controller.user;
 import com.onlineShop.bootcamp.common.ApiResponse;
 import com.onlineShop.bootcamp.dto.user.UserResponse;
 import com.onlineShop.bootcamp.service.user.UserService;
-import com.onlineShop.bootcamp.service.user.UserServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +24,6 @@ public class UserController {
     public ResponseEntity<ApiResponse<UserResponse>> getUserDetails() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserResponse user =userService.getUserByUsername(username);
-        System.out.println( "userid = " + user.getId());
 
         return ResponseEntity.ok(new ApiResponse<>(true, "User details are fetched successfully" , user));
     }

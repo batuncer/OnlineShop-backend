@@ -22,6 +22,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponse getCurrentUser() {
+        return null;
+    }
+
+    @Override
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream().map(UserMapper::toUserResponse).toList();
     }

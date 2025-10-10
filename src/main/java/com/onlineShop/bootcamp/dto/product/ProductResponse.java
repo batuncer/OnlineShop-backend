@@ -17,7 +17,7 @@ public class ProductResponse {
     private Long supplierId;
     private String typeName;
     private Integer amountGrams;
-    private BigDecimal priceGbp;
+    private Double priceGbp;
     private BrewColor brewColor;
     private Integer caffeineMgPerG;
     private String mainMedicinalUse;

@@ -1,6 +1,5 @@
 package com.onlineShop.bootcamp.service.order;
 
-import com.onlineShop.bootcamp.common.ApiResponse;
 import com.onlineShop.bootcamp.dto.order.*;
 import com.onlineShop.bootcamp.entity.Order;
 import com.onlineShop.bootcamp.entity.OrderItem;
@@ -10,7 +9,9 @@ import com.onlineShop.bootcamp.mapper.OrderMapper;
 import com.onlineShop.bootcamp.repository.OrderRepository;
 import com.onlineShop.bootcamp.repository.ProductRepository;
 import com.onlineShop.bootcamp.repository.UserRepository;
+import com.onlineShop.bootcamp.security.JwtUtil;
 import com.onlineShop.bootcamp.service.shippingCost.ShippingCostService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -20,7 +21,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,31 +31,37 @@ public class OrderServiceImp implements OrderService {
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
     private final ShippingCostService shippingCostService;
+    private final HttpServletRequest request;
+    private final JwtUtil jwtUtil;
 
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImp.class);
 
     @Transactional
     @Override
-    public OrderResponse createOrder(Long userId, OrderRequest orderRequest) {
-        logger.info("Creating order for userId: {}", userId);
-        User user = userRepository.findById(userId).orElseThrow(()-> new RuntimeException("User not found" + userId));
+    public OrderResponse createOrder(OrderRequest orderRequest) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")){
+            throw new RuntimeException("Missing header");
+        }
+
+        String token = authHeader.substring(7);
+        Long userId = jwtUtil.extractUserId(token);
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with " + userId));
 
         List<OrderItem> orderItems = new ArrayList<>();
         double totalPrice = 0.0;
         double totalWeight = 0.0;
+
+        Order order = Order.builder()
+                .user(user)
+                .orderDate(LocalDateTime.now())
+                .orderItemList(orderItems)
+                .build();
+
         // Loop for each requested item
         for(OrderItemRequest item : orderRequest.getOrderItems()) {
             Product product = productRepository.findById(item.getProductId()).orElseThrow(() -> new RuntimeException("Product not found" + item.getProductId()));
-
-            OrderItem orderItem = OrderItem.builder()
-                    .product(product)
-                    .quantity(item.getQuantity())
-                    .price(product.getPriceGbp())
-                    .build();
-            orderItems.add(orderItem);
-
-            totalPrice += Integer.parseInt(String.valueOf(product.getPriceGbp())) * item.getQuantity();
-            totalWeight += product.getAmountGrams() * item.getQuantity();
 
             if(product.getStockQuantity() < item.getQuantity()) {
                 throw new RuntimeException("Not enough stock for this item");
@@ -64,22 +70,28 @@ public class OrderServiceImp implements OrderService {
             product.setStockQuantity(product.getStockQuantity() - item.getQuantity());
             productRepository.save(product);
 
+            totalPrice += product.getPriceGbp() * item.getQuantity();
+            totalWeight += product.getAmountGrams() * item.getQuantity();
+
+
+            OrderItem orderItem = OrderItem.builder()
+                    .product(product)
+                    .quantity(item.getQuantity())
+                    .price(product.getPriceGbp())
+                    .order(order)
+                    .build();
+           order.getOrderItemList().add(orderItem);
+
+
+
         }
 
         double shippingCost = shippingCostService.calculateShippingCost(totalPrice,totalWeight );
 
-        Order order = Order.builder()
-                .user(user)
-                .orderDate(LocalDateTime.now())
-                .totalPrice(totalPrice + shippingCost)
-                .orderItemList(orderItems)
-                .build();
+        order.setTotalPrice(totalPrice+shippingCost);
+        order.setShippingCost(shippingCost);
 
         Order savedOrder = orderRepository.save(order);
-
-        for(OrderItem item : orderItems){
-            item.setOrder(savedOrder);
-        }
 
         orderRepository.save(savedOrder);
         logger.info("Order created with id {} for user id: {}", savedOrder.getId(), userId);

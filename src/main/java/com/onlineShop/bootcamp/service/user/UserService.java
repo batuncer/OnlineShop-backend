@@ -7,6 +7,7 @@ import java.util.List;
 public interface UserService {
 
     UserResponse getUserByUsername(String username);
+    UserResponse getCurrentUser();
     List<UserResponse> getAllUsers();
     void deleteUserById(Long id);
 }

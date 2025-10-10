@@ -13,10 +13,9 @@ import java.util.List;
 public class OrderResponse {
 
     private Long id;
-    private String username;
+    private Long userId;
     private LocalDateTime orderDate;
     private Double totalAmount;
     private Double shippingCost;
     private List<OrderItemResponse> orderItems;
-
 }

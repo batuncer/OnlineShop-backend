@@ -1,6 +1,6 @@
 package com.onlineShop.bootcamp.mapper;
 
-import com.onlineShop.bootcamp.dto.order.OrderItemResponse;
+
 import com.onlineShop.bootcamp.dto.order.OrderResponse;
 import com.onlineShop.bootcamp.entity.Order;
 
@@ -14,7 +14,7 @@ public class OrderMapper {
     public static OrderResponse toOrderResponse(Order order) {
         return new OrderResponse(
                 order.getId(),
-                order.getUser().getUsername(),
+                order.getUser().getId(),
                 order.getOrderDate(),
                 order.getTotalPrice().doubleValue(),
                 order.getShippingCost().doubleValue(),

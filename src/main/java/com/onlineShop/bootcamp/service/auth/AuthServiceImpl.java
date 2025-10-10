@@ -38,9 +38,9 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         userRepository.save(user);
-        String token = jwtUtil.generateJwtToken(user.getUsername());
+        String token = jwtUtil.generateJwtToken(user.getId(), user.getUsername());
 
-        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail() , user.getRoles(), token);
+        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail() , user.getRoles(), user.getCreateDate(), token);
     }
 
     @Override
@@ -50,9 +50,9 @@ public class AuthServiceImpl implements AuthService {
         );
 
         User user = userRepository.findByUsername(loginRequest.getUsername()).orElseThrow(() -> new RuntimeException("User not found"));
-        String token = jwtUtil.generateJwtToken(user.getUsername());
+        String token = jwtUtil.generateJwtToken(user.getId(),user.getUsername());
 
-        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail() , user.getRoles(), token);
+        return new AuthResponse(user.getId(), user.getUsername(), user.getEmail() , user.getRoles(), user.getCreateDate(), token);
     }
 
 }
