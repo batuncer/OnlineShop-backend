@@ -1,6 +1,6 @@
 package com.onlineShop.bootcamp.service.user;
 
-import com.onlineShop.bootcamp.dto.UserResponse;
+import com.onlineShop.bootcamp.dto.user.UserResponse;
 import com.onlineShop.bootcamp.entity.User;
 import com.onlineShop.bootcamp.mapper.UserMapper;
 import com.onlineShop.bootcamp.repository.UserRepository;
@@ -19,6 +19,11 @@ public class UserServiceImpl implements UserService {
     public UserResponse getUserByUsername(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
         return UserMapper.toUserResponse(user);
+    }
+
+    @Override
+    public UserResponse getCurrentUser() {
+        return null;
     }
 
     @Override

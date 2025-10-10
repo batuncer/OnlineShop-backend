@@ -1,7 +1,7 @@
 package com.onlineShop.bootcamp.service.product;
 
-import com.onlineShop.bootcamp.dto.ProductRequest;
-import com.onlineShop.bootcamp.dto.ProductResponse;
+import com.onlineShop.bootcamp.dto.product.ProductRequest;
+import com.onlineShop.bootcamp.dto.product.ProductResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

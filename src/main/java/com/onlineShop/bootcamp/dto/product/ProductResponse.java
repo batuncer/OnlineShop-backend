@@ -1,4 +1,4 @@
-package com.onlineShop.bootcamp.dto;
+package com.onlineShop.bootcamp.dto.product;
 
 import com.onlineShop.bootcamp.entity.enums.BrewColor;
 import lombok.AllArgsConstructor;
@@ -17,7 +17,7 @@ public class ProductResponse {
     private Long supplierId;
     private String typeName;
     private Integer amountGrams;
-    private BigDecimal priceGbp;
+    private Double priceGbp;
     private BrewColor brewColor;
     private Integer caffeineMgPerG;
     private String mainMedicinalUse;

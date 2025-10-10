@@ -1,8 +1,8 @@
 package com.onlineShop.bootcamp.service.auth;
 
-import com.onlineShop.bootcamp.dto.AuthResponse;
-import com.onlineShop.bootcamp.dto.LoginRequest;
-import com.onlineShop.bootcamp.dto.RegisterRequest;
+import com.onlineShop.bootcamp.dto.auth.AuthResponse;
+import com.onlineShop.bootcamp.dto.auth.LoginRequest;
+import com.onlineShop.bootcamp.dto.auth.RegisterRequest;
 
 public interface AuthService {
 
