@@ -82,8 +82,6 @@ public class OrderServiceImp implements OrderService {
                     .build();
            order.getOrderItemList().add(orderItem);
 
-
-
         }
 
         double shippingCost = shippingCostService.calculateShippingCost(totalPrice,totalWeight );
@@ -101,13 +99,22 @@ public class OrderServiceImp implements OrderService {
 
 
     @Override
-    public List<OrderResponse> getUserOrders(Long userId) {
-        logger.info("Fetching orders for user id {}", userId);
+    public List<OrderResponse> getUserOrders() {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with id " + userId));
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")){
+            throw new RuntimeException("Missing header");
+        }
+
+        String token = authHeader.substring(7);
+        Long userId = jwtUtil.extractUserId(token);
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with " + userId));
 
         List<Order> orders = orderRepository.findByUser(user);
+
+        logger.info("Fetching orders for user id {}", userId);
 
         return orders.stream()
                 .map(OrderMapper::toOrderResponse)
@@ -116,12 +123,13 @@ public class OrderServiceImp implements OrderService {
 
     @Override
     public List<OrderResponse> getAllOrders() {
-        logger.info("Fetching all orders for admin");
-        List<Order> orders = orderRepository.findAll();
 
+        List<Order> orders = orderRepository.findAll();
+        logger.info("Fetching all orders for admin");
         return orders.stream()
                 .map(OrderMapper::toOrderResponse)
                 .collect(Collectors.toList());
+
     }
 
 
