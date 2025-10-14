@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ShippingCostServiceImpTest {
-
+// write test
     private final ShippingCostServiceImp shippingCostService = new ShippingCostServiceImp();
 
     @Test
