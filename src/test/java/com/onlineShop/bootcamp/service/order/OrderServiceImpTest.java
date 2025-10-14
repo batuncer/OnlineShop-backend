@@ -5,6 +5,7 @@ import com.onlineShop.bootcamp.dto.order.OrderPreviewResponse;
 import com.onlineShop.bootcamp.dto.order.OrderRequest;
 import com.onlineShop.bootcamp.entity.Order;
 import com.onlineShop.bootcamp.entity.Product;
+import com.onlineShop.bootcamp.entity.User;
 import com.onlineShop.bootcamp.repository.OrderRepository;
 import com.onlineShop.bootcamp.repository.ProductRepository;
 import com.onlineShop.bootcamp.repository.UserRepository;
@@ -101,5 +102,50 @@ class OrderServiceImpTest {
         assertThat(response.getItems().get(1).getSubTotal()).isEqualTo(5.0);
 
         verify(shippingCostService).calculateShippingCost(expectedTotalPrice, expectedTotalWeight);
+    }
+
+    @Test
+    void deleteOrderThrowsWhenAuthorizationHeaderMissing() {
+        when(httpServletRequest.getHeader("Authorization")).thenReturn(null);
+
+        assertThrows(RuntimeException.class, () -> orderService.deleteOrder(42L));
+        verify(orderRepository, never()).delete(any(Order.class));
+    }
+
+    @Test
+    void deleteOrderThrowsWhenOrderNotFound() {
+        when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer token");
+        when(jwtUtil.extractUserId("token")).thenReturn(99L);
+        when(orderRepository.findById(5L)).thenReturn(Optional.empty());
+
+        assertThrows(RuntimeException.class, () -> orderService.deleteOrder(5L));
+        verify(orderRepository, never()).delete(any(Order.class));
+    }
+
+    @Test
+    void deleteOrderThrowsWhenUserDoesNotOwnOrder() {
+        when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer token");
+        when(jwtUtil.extractUserId("token")).thenReturn(1L);
+
+        User otherUser = User.builder().id(2L).build();
+        Order order = Order.builder().id(7L).user(otherUser).build();
+        when(orderRepository.findById(7L)).thenReturn(Optional.of(order));
+
+        assertThrows(RuntimeException.class, () -> orderService.deleteOrder(7L));
+        verify(orderRepository, never()).delete(any(Order.class));
+    }
+
+    @Test
+    void deleteOrderRemovesOrderWhenOwnedByUser() {
+        when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer token");
+        when(jwtUtil.extractUserId("token")).thenReturn(1L);
+
+        User owner = User.builder().id(1L).build();
+        Order order = Order.builder().id(10L).user(owner).build();
+        when(orderRepository.findById(10L)).thenReturn(Optional.of(order));
+
+        orderService.deleteOrder(10L);
+
+        verify(orderRepository).delete(order);
     }
 }

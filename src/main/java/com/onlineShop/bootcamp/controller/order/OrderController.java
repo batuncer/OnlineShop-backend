@@ -41,4 +41,10 @@ public class OrderController {
         return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched for the user", orderService.getUserOrders()));
     }
 
+    @DeleteMapping("/{orderId}")
+    public ResponseEntity<ApiResponse<String>> deleteOrder(@PathVariable Long orderId) {
+        orderService.deleteOrder(orderId);
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order is deleted", null));
+    }
+
 }

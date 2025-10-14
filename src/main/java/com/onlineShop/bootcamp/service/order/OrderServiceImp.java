@@ -164,4 +164,26 @@ public class OrderServiceImp implements OrderService {
         return new OrderPreviewResponse(totalPrice, shippingCost, itemResponses);
     }
 
+    @Transactional
+    @Override
+    public void deleteOrder(Long orderId) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing header");
+        }
+
+        String token = authHeader.substring(7);
+        Long userId = jwtUtil.extractUserId(token);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found with id " + orderId));
+
+        if (!order.getUser().getId().equals(userId)) {
+            throw new RuntimeException("User not authorized to delete this order");
+        }
+
+        orderRepository.delete(order);
+        logger.info("Order deleted with id {} for user id: {}", orderId, userId);
+    }
+
 }
