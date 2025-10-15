@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ProductResponse {
     private Long id;
-    private Long supplierId;
+    private String supplierName;
     private String typeName;
     private Integer amountGrams;
     private Double priceGbp;

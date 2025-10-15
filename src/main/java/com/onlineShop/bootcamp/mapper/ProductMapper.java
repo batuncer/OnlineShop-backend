@@ -29,7 +29,7 @@ public class ProductMapper {
 
         return ProductResponse.builder()
                 .id(entity.getId())
-                .supplierId(entity.getSupplier() != null ? entity.getSupplier().getId() : null)
+                .supplierName(entity.getSupplier().getName())
                 .typeName(entity.getProductName())
                 .amountGrams(entity.getAmountGrams())
                 .priceGbp(entity.getPriceGbp())
