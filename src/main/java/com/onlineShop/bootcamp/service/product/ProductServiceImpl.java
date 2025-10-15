@@ -29,6 +29,7 @@ public class ProductServiceImpl implements ProductService {
     private final ProductMapper mapper;
     private final ProductRepository repository;
 
+    @Transactional
     public ProductResponse create(ProductRequest req) {
         if (req.getSupplierId() != null) {
             Supplier ref = em.getReference(Supplier.class, req.getSupplierId());

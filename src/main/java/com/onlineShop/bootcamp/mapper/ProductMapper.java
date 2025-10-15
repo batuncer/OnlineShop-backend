@@ -21,6 +21,9 @@ public class ProductMapper {
                 .caffeineMgPerG(dto.getCaffeineMgPerG())
                 .mainMedicinalUse(dto.getMainMedicinalUse())
                 .recommendedGramsPerCup(dto.getRecommendedGramsPerCup())
+                .description(dto.getDescription())
+                .stockQuantity(dto.getStockQuantity())
+                .category(dto.getCategory())
                 .build();
     }
 
