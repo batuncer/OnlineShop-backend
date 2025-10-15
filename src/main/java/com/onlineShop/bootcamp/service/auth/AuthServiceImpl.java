@@ -5,6 +5,7 @@ import com.onlineShop.bootcamp.dto.auth.LoginRequest;
 import com.onlineShop.bootcamp.dto.auth.RegisterRequest;
 import com.onlineShop.bootcamp.entity.User;
 import com.onlineShop.bootcamp.repository.UserRepository;
+import com.onlineShop.bootcamp.service.email.EmailService;
 import com.onlineShop.bootcamp.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,6 +23,7 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     @Override
     public AuthResponse register(RegisterRequest registerRequest) {
@@ -38,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
 
         userRepository.save(user);
+        emailService.sendRegistrationWelcome(user);
         String token = jwtUtil.generateJwtToken(user.getId(), user.getUsername());
 
         return new AuthResponse(user.getId(), user.getUsername(), user.getEmail() , user.getRoles(), user.getCreateDate(), token);
