@@ -186,9 +186,6 @@ public class OrderServiceImp implements OrderService {
         if (orderItems != null) {
             for (OrderItem orderItem : orderItems) {
                 Product product = orderItem.getProduct();
-                if (product == null) {
-                    continue;
-                }
 
                 Integer currentStock = product.getStockQuantity() == null ? 0 : product.getStockQuantity();
                 product.setStockQuantity(currentStock + orderItem.getQuantity());
