@@ -4,6 +4,7 @@ import com.onlineShop.bootcamp.dto.order.OrderItemRequest;
 import com.onlineShop.bootcamp.dto.order.OrderPreviewResponse;
 import com.onlineShop.bootcamp.dto.order.OrderRequest;
 import com.onlineShop.bootcamp.entity.Order;
+import com.onlineShop.bootcamp.entity.OrderItem;
 import com.onlineShop.bootcamp.entity.Product;
 import com.onlineShop.bootcamp.entity.User;
 import com.onlineShop.bootcamp.repository.OrderRepository;
@@ -136,16 +137,32 @@ class OrderServiceImpTest {
     }
 
     @Test
-    void deleteOrderRemovesOrderWhenOwnedByUser() {
+    void deleteOrderRestoresStockAndRemovesOrderWhenOwnedByUser() {
         when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer token");
         when(jwtUtil.extractUserId("token")).thenReturn(1L);
 
         User owner = User.builder().id(1L).build();
-        Order order = Order.builder().id(10L).user(owner).build();
+        Product product = Product.builder().id(4L).stockQuantity(5).build();
+        OrderItem orderItem = OrderItem.builder()
+                .id(11L)
+                .order(null)
+                .product(product)
+                .quantity(2)
+                .price(5.0)
+                .build();
+
+        Order order = Order.builder()
+                .id(10L)
+                .user(owner)
+                .orderItemList(List.of(orderItem))
+                .build();
+        orderItem.setOrder(order);
         when(orderRepository.findById(10L)).thenReturn(Optional.of(order));
 
         orderService.deleteOrder(10L);
 
+        assertThat(product.getStockQuantity()).isEqualTo(7);
+        verify(productRepository).save(product);
         verify(orderRepository).delete(order);
     }
 }

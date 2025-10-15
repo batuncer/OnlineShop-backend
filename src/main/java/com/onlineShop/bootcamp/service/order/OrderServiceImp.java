@@ -182,6 +182,20 @@ public class OrderServiceImp implements OrderService {
             throw new RuntimeException("User not authorized to delete this order");
         }
 
+        List<OrderItem> orderItems = order.getOrderItemList();
+        if (orderItems != null) {
+            for (OrderItem orderItem : orderItems) {
+                Product product = orderItem.getProduct();
+                if (product == null) {
+                    continue;
+                }
+
+                Integer currentStock = product.getStockQuantity() == null ? 0 : product.getStockQuantity();
+                product.setStockQuantity(currentStock + orderItem.getQuantity());
+                productRepository.save(product);
+            }
+        }
+
         orderRepository.delete(order);
         logger.info("Order deleted with id {} for user id: {}", orderId, userId);
     }
