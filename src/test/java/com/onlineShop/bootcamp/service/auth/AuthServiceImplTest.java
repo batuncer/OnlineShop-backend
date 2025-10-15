@@ -6,6 +6,7 @@ import com.onlineShop.bootcamp.dto.auth.RegisterRequest;
 import com.onlineShop.bootcamp.entity.User;
 import com.onlineShop.bootcamp.repository.UserRepository;
 import com.onlineShop.bootcamp.security.JwtUtil;
+import com.onlineShop.bootcamp.service.email.EmailService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,6 +42,9 @@ class AuthServiceImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private EmailService emailService;
+
     @InjectMocks
     private AuthServiceImpl authService;
 
@@ -67,6 +71,7 @@ class AuthServiceImplTest {
         assertThrows(RuntimeException.class, () -> authService.register(registerRequest));
 
         verify(userRepository, never()).save(any(User.class));
+        verify(emailService, never()).sendRegistrationWelcome(any(User.class));
         verify(jwtUtil, never()).generateJwtToken(anyLong(), any());
     }
 
@@ -98,6 +103,7 @@ class AuthServiceImplTest {
         assertThat(response.getToken()).isEqualTo("jwt-token");
         assertThat(response.getCreatedDate()).isNotNull();
 
+        verify(emailService).sendRegistrationWelcome(savedUser);
         verify(jwtUtil).generateJwtToken(42L, "alice");
     }
 

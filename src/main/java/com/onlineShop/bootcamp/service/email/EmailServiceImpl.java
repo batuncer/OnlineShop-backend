@@ -37,11 +37,25 @@ public class EmailServiceImpl implements EmailService {
                 buildMessage(order, "Your order has been cancelled. The details were:"));
     }
 
+    @Override
+    public void sendRegistrationWelcome(User user) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Welcome ").append(user != null ? user.getUsername() : "there").append("!\n\n");
+        builder.append("Thank you for registering with Online Shop. We're excited to have you on board.");
+
+        sendToUser(user, "Welcome to Online Shop", builder.toString(), null);
+    }
+
     private void sendTemplate(Order order, String subject, String body) {
         User user = order != null ? order.getUser() : null;
+        Long orderId = order != null ? order.getId() : null;
+        sendToUser(user, subject, body, orderId);
+    }
+
+    private void sendToUser(User user, String subject, String body, Long relatedOrderId) {
         if (user == null || user.getEmail() == null || user.getEmail().isBlank()) {
-            logger.warn("Skipping email with subject '{}' because user email is missing. Order id {}", subject,
-                    order != null ? order.getId() : null);
+            logger.warn("Skipping email with subject '{}' because user email is missing. Related order id {}", subject,
+                    relatedOrderId);
             return;
         }
 
@@ -53,11 +67,10 @@ public class EmailServiceImpl implements EmailService {
 
         try {
             mailSender.send(message);
-            logger.info("Sent '{}' email to {} for order id {}", subject, user.getEmail(),
-                    order != null ? order.getId() : null);
+            logger.info("Sent '{}' email to {}. Related order id {}", subject, user.getEmail(), relatedOrderId);
         } catch (MailException ex) {
-            logger.error("Failed to send '{}' email to {} for order id {}: {}", subject, user.getEmail(),
-                    order != null ? order.getId() : null, ex.getMessage(), ex);
+            logger.error("Failed to send '{}' email to {}. Related order id {}: {}", subject, user.getEmail(),
+                    relatedOrderId, ex.getMessage(), ex);
         }
     }
 
