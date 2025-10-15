@@ -11,4 +11,5 @@ public interface OrderService {
     List<OrderResponse> getUserOrders();
     List<OrderResponse> getAllOrders();
     OrderPreviewResponse previewOrder(OrderRequest orderRequest);
+    void deleteOrder(Long orderId);
 }
