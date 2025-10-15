@@ -11,6 +11,7 @@ import com.onlineShop.bootcamp.repository.OrderRepository;
 import com.onlineShop.bootcamp.repository.ProductRepository;
 import com.onlineShop.bootcamp.repository.UserRepository;
 import com.onlineShop.bootcamp.security.JwtUtil;
+import com.onlineShop.bootcamp.service.email.EmailService;
 import com.onlineShop.bootcamp.service.shippingCost.ShippingCostService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,9 @@ class OrderServiceImpTest {
     @Mock
     private JwtUtil jwtUtil;
 
+    @Mock
+    private EmailService emailService;
+
     @InjectMocks
     private OrderServiceImp orderService;
 
@@ -61,6 +65,41 @@ class OrderServiceImpTest {
         assertThrows(RuntimeException.class, () -> orderService.createOrder(orderRequest));
 
         verify(orderRepository, never()).save(any(Order.class));
+        verify(emailService, never()).sendOrderConfirmation(any(Order.class));
+    }
+
+    @Test
+    void createOrderPersistsAndSendsEmail() {
+        OrderRequest orderRequest = new OrderRequest();
+        orderRequest.setOrderItems(List.of(new OrderItemRequest(1L, 2)));
+
+        when(httpServletRequest.getHeader("Authorization")).thenReturn("Bearer token");
+        when(jwtUtil.extractUserId("token")).thenReturn(1L);
+
+        User user = User.builder().id(1L).email("customer@example.com").build();
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        Product product = Product.builder()
+                .id(1L)
+                .productName("Chamomile Tea")
+                .priceGbp(5.0)
+                .amountGrams(100)
+                .stockQuantity(10)
+                .build();
+
+        when(productRepository.findById(1L)).thenReturn(Optional.of(product));
+        when(shippingCostService.calculateShippingCost(anyDouble(), anyDouble())).thenReturn(3.0);
+        when(orderRepository.save(any(Order.class))).thenAnswer(invocation -> {
+            Order order = invocation.getArgument(0);
+            order.setId(99L);
+            return order;
+        });
+
+        orderService.createOrder(orderRequest);
+
+        verify(productRepository).save(product);
+        verify(orderRepository).save(any(Order.class));
+        verify(emailService).sendOrderConfirmation(argThat(order -> order.getId().equals(99L)));
     }
 
     @Test
@@ -111,6 +150,7 @@ class OrderServiceImpTest {
 
         assertThrows(RuntimeException.class, () -> orderService.deleteOrder(42L));
         verify(orderRepository, never()).delete(any(Order.class));
+        verify(emailService, never()).sendOrderCancellation(any(Order.class));
     }
 
     @Test
@@ -121,6 +161,7 @@ class OrderServiceImpTest {
 
         assertThrows(RuntimeException.class, () -> orderService.deleteOrder(5L));
         verify(orderRepository, never()).delete(any(Order.class));
+        verify(emailService, never()).sendOrderCancellation(any(Order.class));
     }
 
     @Test
@@ -134,6 +175,7 @@ class OrderServiceImpTest {
 
         assertThrows(RuntimeException.class, () -> orderService.deleteOrder(7L));
         verify(orderRepository, never()).delete(any(Order.class));
+        verify(emailService, never()).sendOrderCancellation(any(Order.class));
     }
 
     @Test
@@ -163,6 +205,7 @@ class OrderServiceImpTest {
 
         assertThat(product.getStockQuantity()).isEqualTo(7);
         verify(productRepository).save(product);
+        verify(emailService).sendOrderCancellation(order);
         verify(orderRepository).delete(order);
     }
 }

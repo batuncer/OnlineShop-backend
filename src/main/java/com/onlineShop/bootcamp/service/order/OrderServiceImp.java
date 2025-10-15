@@ -6,6 +6,7 @@ import com.onlineShop.bootcamp.entity.OrderItem;
 import com.onlineShop.bootcamp.entity.Product;
 import com.onlineShop.bootcamp.entity.User;
 import com.onlineShop.bootcamp.mapper.OrderMapper;
+import com.onlineShop.bootcamp.service.email.EmailService;
 import com.onlineShop.bootcamp.repository.OrderRepository;
 import com.onlineShop.bootcamp.repository.ProductRepository;
 import com.onlineShop.bootcamp.repository.UserRepository;
@@ -33,6 +34,7 @@ public class OrderServiceImp implements OrderService {
     private final ShippingCostService shippingCostService;
     private final HttpServletRequest request;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
     private static Logger logger = LoggerFactory.getLogger(OrderServiceImp.class);
 
@@ -91,8 +93,9 @@ public class OrderServiceImp implements OrderService {
 
         Order savedOrder = orderRepository.save(order);
 
-        orderRepository.save(savedOrder);
         logger.info("Order created with id {} for user id: {}", savedOrder.getId(), userId);
+
+        emailService.sendOrderConfirmation(savedOrder);
 
         return OrderMapper.toOrderResponse(savedOrder);
     }
@@ -186,6 +189,11 @@ public class OrderServiceImp implements OrderService {
         if (orderItems != null) {
             for (OrderItem orderItem : orderItems) {
                 Product product = orderItem.getProduct();
+                if (product == null) {
+                    logger.warn("Skipping stock restoration for order item {} because product reference is missing",
+                            orderItem.getId());
+                    continue;
+                }
 
                 Integer currentStock = product.getStockQuantity() == null ? 0 : product.getStockQuantity();
                 product.setStockQuantity(currentStock + orderItem.getQuantity());
@@ -193,6 +201,7 @@ public class OrderServiceImp implements OrderService {
             }
         }
 
+        emailService.sendOrderCancellation(order);
         orderRepository.delete(order);
         logger.info("Order deleted with id {} for user id: {}", orderId, userId);
     }
