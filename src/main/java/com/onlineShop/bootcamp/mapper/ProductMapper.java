@@ -13,6 +13,7 @@ public class ProductMapper {
     public Product toEntity(ProductRequest dto) {
         if (dto == null) return null;
 
+
         return Product.builder()
                 .productName(dto.getTypeName())
                 .amountGrams(dto.getAmountGrams())
