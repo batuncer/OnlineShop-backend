@@ -6,6 +6,7 @@ import com.onlineShop.bootcamp.dto.order.OrderRequest;
 import com.onlineShop.bootcamp.dto.order.OrderResponse;
 import com.onlineShop.bootcamp.service.order.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -21,30 +22,30 @@ public class OrderController {
 
     @PostMapping("/preview")
     public ResponseEntity<ApiResponse<OrderPreviewResponse>> previewOrder(@RequestBody OrderRequest orderRequest) {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Order preview", orderService.previewOrder(orderRequest)));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order preview", orderService.previewOrder(orderRequest), HttpStatus.FOUND.value()));
     }
 
     //Admin role
     @PreAuthorize("hasRole('ADMIN")
     @GetMapping
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getAllOrders() {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched", orderService.getAllOrders()));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched", orderService.getAllOrders(), HttpStatus.FOUND.value()));
     }
 
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<OrderResponse>> createOrder(@RequestBody OrderRequest orderRequest) {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Order is created", orderService.createOrder(orderRequest)));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order is created", orderService.createOrder(orderRequest), HttpStatus.CREATED.value()));
     }
 
     @GetMapping("/orders")
     public ResponseEntity<ApiResponse<List<OrderResponse>>> getUserOrders() {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched for the user", orderService.getUserOrders()));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order list are fetched for the user", orderService.getUserOrders(), HttpStatus.FOUND.value()));
     }
 
     @DeleteMapping("/{orderId}")
     public ResponseEntity<ApiResponse<String>> deleteOrder(@PathVariable Long orderId) {
         orderService.deleteOrder(orderId);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Order is deleted", null));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Order is deleted", null, HttpStatus.OK.value()));
     }
 
 }
