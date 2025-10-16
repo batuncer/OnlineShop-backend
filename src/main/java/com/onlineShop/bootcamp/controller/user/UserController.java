@@ -4,6 +4,7 @@ import com.onlineShop.bootcamp.common.ApiResponse;
 import com.onlineShop.bootcamp.dto.user.UserResponse;
 import com.onlineShop.bootcamp.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +26,7 @@ public class UserController {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         UserResponse user =userService.getUserByUsername(username);
 
-        return ResponseEntity.ok(new ApiResponse<>(true, "User details are fetched successfully" , user));
+        return ResponseEntity.ok(new ApiResponse<>(true, "User details are fetched successfully" , user, HttpStatus.FOUND.value()));
     }
 
     //Admin role
@@ -33,7 +34,7 @@ public class UserController {
     @GetMapping()
     public ResponseEntity<ApiResponse<List<UserResponse>>> getAllUsers() {
         List<UserResponse> users = userService.getAllUsers();
-        return ResponseEntity.ok(new ApiResponse<>(true, "All users fetched", users));
+        return ResponseEntity.ok(new ApiResponse<>(true, "All users fetched", users, HttpStatus.FOUND.value()));
     }
 
     //Admin role
@@ -41,7 +42,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<String>> deleteUserById(@PathVariable Long id) {
         userService.deleteUserById(id);
-        return ResponseEntity.ok(new ApiResponse<>(true,"User is deleted", null));
+        return ResponseEntity.ok(new ApiResponse<>(true,"User is deleted", null, HttpStatus.OK.value()));
     }
 
 }

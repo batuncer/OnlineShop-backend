@@ -6,6 +6,7 @@ import com.onlineShop.bootcamp.dto.supplier.SupplierRequest;
 import com.onlineShop.bootcamp.dto.supplier.SupplierResponse;
 import com.onlineShop.bootcamp.service.supplier.SupplierService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +22,12 @@ public class SupplierController {
     @PostMapping("/create")
     public ResponseEntity<ApiResponse<SupplierResponse>> createSupplier(@RequestBody SupplierRequest supplierRequest) {
         SupplierResponse response = supplierService.createSupplier(supplierRequest);
-        return ResponseEntity.ok(new ApiResponse<>(true, "Supplier created",response));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Supplier created",response, HttpStatus.CREATED.value()));
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<SupplierResponse>>> getAllSuppliers() {
-        return ResponseEntity.ok(new ApiResponse<>(true, "Supplier created",supplierService.getAllSuppliers()));
+        return ResponseEntity.ok(new ApiResponse<>(true, "Supplier created",supplierService.getAllSuppliers(), HttpStatus.FOUND.value()));
     }
 
 }
