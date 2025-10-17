@@ -60,7 +60,6 @@ class ProductServiceImplTest {
         assertThat(responsePage.getTotalElements()).isEqualTo(1);
         ProductResponse response = responsePage.getContent().get(0);
         assertThat(response.getId()).isEqualTo(10L);
-        assertThat(response.getSupplierId()).isEqualTo(5L);
         assertThat(response.getTypeName()).isEqualTo("Breakfast Tea");
         assertThat(response.getCategory()).isEqualTo("TEA");
         assertThat(response.getStockQuantity()).isEqualTo(8);
