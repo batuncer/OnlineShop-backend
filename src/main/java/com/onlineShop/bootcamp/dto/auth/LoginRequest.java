@@ -1,4 +1,4 @@
-package com.onlineShop.bootcamp.dto;
+package com.onlineShop.bootcamp.dto.auth;
 
 import lombok.Data;
 

@@ -33,12 +33,14 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
 
         String username = null;
+        Long userId = null;
         String jwtToken = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwtToken = authHeader.substring(7);
             try {
                 username = jwtUtil.extractUsername(jwtToken);
+                userId = jwtUtil.extractUserId(jwtToken);
             } catch (Exception e) {
                 System.err.println("JWT extraction failed: " + e.getMessage());
             }
