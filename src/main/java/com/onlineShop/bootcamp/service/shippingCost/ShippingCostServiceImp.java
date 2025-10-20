@@ -8,7 +8,6 @@ public class ShippingCostServiceImp implements ShippingCostService{
     @Override
     public double calculateShippingCost(double totalPrice, double totalWeight) {
 
-
         if(totalWeight < 500 && totalPrice < 100.00){
             return 1.50;
         } else if(totalWeight >= 600 && totalWeight <= 10000 && totalPrice <100.00){
@@ -18,7 +17,6 @@ public class ShippingCostServiceImp implements ShippingCostService{
         } else if(totalPrice >= 100 ) {
             return 0.00;
         }
-
 
         return 0.00;
     }

@@ -147,7 +147,7 @@ public class OrderServiceImp implements OrderService {
             Product product = productRepository.findById(orderItem.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found with " + orderItem.getProductId()));
 
-            double itemTotal = product.getPriceGbp() * orderItem.getQuantity();
+            double itemTotal = product.getPriceGbp().doubleValue() * orderItem.getQuantity();
             totalPrice += itemTotal;
             totalWeight += product.getAmountGrams() * orderItem.getQuantity();
 
