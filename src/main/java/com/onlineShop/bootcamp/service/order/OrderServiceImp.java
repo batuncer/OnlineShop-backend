@@ -147,7 +147,7 @@ public class OrderServiceImp implements OrderService {
             Product product = productRepository.findById(orderItem.getProductId())
                     .orElseThrow(() -> new RuntimeException("Product not found with " + orderItem.getProductId()));
 
-            double itemTotal = product.getPriceGbp().doubleValue() * orderItem.getQuantity();
+            double itemTotal = product.getPriceGbp() * orderItem.getQuantity();
             totalPrice += itemTotal;
             totalWeight += product.getAmountGrams() * orderItem.getQuantity();
 
@@ -164,7 +164,7 @@ public class OrderServiceImp implements OrderService {
 
         double shippingCost = shippingCostService.calculateShippingCost(totalPrice, totalWeight);
 
-        return new OrderPreviewResponse(totalPrice, shippingCost, itemResponses);
+        return new OrderPreviewResponse(totalPrice, shippingCost, itemResponses, totalWeight);
     }
 
     @Transactional

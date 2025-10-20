@@ -14,5 +14,6 @@ public class OrderPreviewResponse {
     private double totalPrice;
     private double shippingCost;
     private List<OrderItemResponse> items;
+    private double totalWeight;
     
     }
