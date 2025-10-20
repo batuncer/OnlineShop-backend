@@ -164,7 +164,7 @@ public class OrderServiceImp implements OrderService {
 
         double shippingCost = shippingCostService.calculateShippingCost(totalPrice, totalWeight);
 
-        return new OrderPreviewResponse(totalPrice, shippingCost, itemResponses);
+        return new OrderPreviewResponse(totalPrice, shippingCost, itemResponses, totalWeight);
     }
 
     @Transactional
